@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/../ApiGateway/ApiGateway.iml" filepath="$PROJECT_DIR$/../ApiGateway/ApiGateway.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../ForumDiscoveryService/ForumDiscoveryService.iml" filepath="$PROJECT_DIR$/../ForumDiscoveryService/ForumDiscoveryService.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../Topicos/Topicos.iml" filepath="$PROJECT_DIR$/../Topicos/Topicos.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../Usuarios/Usuarios.iml" filepath="$PROJECT_DIR$/../Usuarios/Usuarios.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/forum-microservices.iml" filepath="$PROJECT_DIR$/.idea/forum-microservices.iml" />
+    </modules>
+  </component>
+</project>
