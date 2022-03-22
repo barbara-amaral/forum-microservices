@@ -6,7 +6,7 @@ import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Usuario {
+public class UsuarioModel {
 
     private String id;
 

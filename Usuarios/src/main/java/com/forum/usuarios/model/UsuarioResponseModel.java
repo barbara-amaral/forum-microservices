@@ -1,6 +1,6 @@
-package com.forum.usuarios.dto;
+package com.forum.usuarios.model;
 
-public class UsuarioResponseDTO {
+public class UsuarioResponseModel {
 
     private String id;
     private String nome;

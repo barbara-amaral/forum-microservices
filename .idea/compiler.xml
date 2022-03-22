@@ -8,8 +8,8 @@
         <outputRelativeToContentRoot value="true" />
         <module name="ForumDiscoveryService" />
         <module name="Topicos" />
-        <module name="Usuarios" />
         <module name="ApiGateway" />
+        <module name="Usuarios" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

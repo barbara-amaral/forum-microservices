@@ -1,5 +1,6 @@
 package com.forum.usuarios.security;
 
+import com.forum.usuarios.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,21 +17,27 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
 
     private Environment environment;
+    private UsuarioService usuarioService;
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public SecurityConfigurations(Environment environment){
+    public SecurityConfigurations(Environment environment, UsuarioService usuarioService, BCryptPasswordEncoder bCryptPasswordEncoder){
         this.environment = environment;
+        this.usuarioService = usuarioService;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
-        http.authorizeRequests().antMatchers("/**").hasIpAddress(environment.getProperty("gateway.ip"));
+        http.authorizeRequests().antMatchers("/**").hasIpAddress(environment.getProperty("gateway.ip"))
+                .and()
+                .addFilter(getAuthenticationFilter());
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        super.configure(auth);
+        auth.userDetailsService(usuarioService).passwordEncoder(bCryptPasswordEncoder);
     }
 
     @Override
@@ -38,8 +45,14 @@ public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
         super.configure(web);
     }
 
-    @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder(){
-        return new BCryptPasswordEncoder();
+    private AuthenticationFilter getAuthenticationFilter() throws Exception {
+        AuthenticationFilter authenticationFilter = new AuthenticationFilter(usuarioService, environment, authenticationManager());
+        //authenticationFilter.setAuthenticationManager(authenticationManager());
+        authenticationFilter.setFilterProcessesUrl(environment.getProperty("login.url.path"));
+        return authenticationFilter;
     }
+
+
 }
+
+
