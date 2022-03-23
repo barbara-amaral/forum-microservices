@@ -1,9 +1,8 @@
 package com.forum.usuarios.controller;
 
 import com.forum.usuarios.dto.UsuarioDTO;
-import com.forum.usuarios.model.LoginModel;
-import com.forum.usuarios.model.UsuarioResponseModel;
 import com.forum.usuarios.model.UsuarioModel;
+import com.forum.usuarios.model.UsuarioResponseModel;
 import com.forum.usuarios.service.UsuarioService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
