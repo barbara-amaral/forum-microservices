@@ -8,12 +8,14 @@
         <outputRelativeToContentRoot value="true" />
         <module name="ForumDiscoveryService" />
         <module name="Topicos" />
+        <module name="ForumConfigServer" />
         <module name="ApiGateway" />
         <module name="Usuarios" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="ApiGateway" target="11" />
+      <module name="ForumConfigServer" target="11" />
       <module name="ForumDiscoveryService" target="11" />
       <module name="Topicos" target="11" />
       <module name="Usuarios" target="11" />
@@ -22,6 +24,7 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="ApiGateway" options="-parameters" />
+      <module name="ForumConfigServer" options="-parameters" />
       <module name="ForumDiscoveryService" options="-parameters" />
       <module name="Topicos" options="-parameters" />
       <module name="Usuarios" options="-parameters" />
