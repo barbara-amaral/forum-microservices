@@ -6,6 +6,8 @@ import com.forum.usuarios.model.UsuarioResponseModel;
 import com.forum.usuarios.service.UsuarioService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -42,6 +44,13 @@ public class UsuarioController {
         UsuarioResponseModel responseDTO = modelMapper.map(usuarioCriado, UsuarioResponseModel.class);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
+    }
+
+    @DeleteMapping("/deletar/{id}")
+    public ResponseEntity<String> deletar(@PathVariable(value = "id") String id){
+        usuarioService.deletarUsuario(id);
+
+        return ResponseEntity.status(HttpStatus.OK).body("Usuario deletado com sucesso");
     }
 
 }

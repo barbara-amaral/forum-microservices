@@ -23,7 +23,7 @@ public class UsuarioModel {
     @Size(min=2, max=16, message = "Senha nao deve ser menor que 2 caracteres e maior que 16 caracteres.")
     private String senha;
 
-    private List<?> perfis = new ArrayList<>();
+    private List<Perfil> perfis = new ArrayList<>();
 
     public String getId() {
         return id;
@@ -57,11 +57,11 @@ public class UsuarioModel {
         this.senha = senha;
     }
 
-    public List<?> getPerfis() {
+    public List<Perfil> getPerfis() {
         return perfis;
     }
 
-    public void setPerfis(List<?> perfis) {
+    public void setPerfis(List<Perfil> perfis) {
         this.perfis = perfis;
     }
 }

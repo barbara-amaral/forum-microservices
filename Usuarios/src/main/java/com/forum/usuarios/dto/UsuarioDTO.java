@@ -1,6 +1,9 @@
 package com.forum.usuarios.dto;
 
+import com.forum.usuarios.model.Perfil;
+
 import java.io.Serializable;
+import java.util.List;
 
 public class UsuarioDTO implements Serializable {
 
@@ -8,6 +11,7 @@ public class UsuarioDTO implements Serializable {
     private String nome;
     private String email;
     private String senha;
+    private List<Perfil> perfis;
 
     public String getId() {
         return id;
@@ -39,5 +43,13 @@ public class UsuarioDTO implements Serializable {
 
     public void setSenha(String senha) {
         this.senha = senha;
+    }
+
+    public List<Perfil> getPerfis() {
+        return perfis;
+    }
+
+    public void setPerfis(List<Perfil> perfis) {
+        this.perfis = perfis;
     }
 }
