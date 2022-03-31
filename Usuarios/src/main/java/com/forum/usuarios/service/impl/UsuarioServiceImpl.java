@@ -91,11 +91,4 @@ public class UsuarioServiceImpl implements UsuarioService {
         return new ModelMapper().map(usuarioEntity, UsuarioDTO.class);
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UsuarioEntity usuarioEntity = usuarioRepository.findByEmail(username);
-
-        if(usuarioEntity == null) throw new UsernameNotFoundException(username);
-        return new User(usuarioEntity.getEmail(), usuarioEntity.getSenha(), true, true, true, true, (Collection<? extends GrantedAuthority>) usuarioEntity.getPerfis());
-    }
 }
