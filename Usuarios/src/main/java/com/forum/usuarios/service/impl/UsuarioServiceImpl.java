@@ -1,5 +1,6 @@
 package com.forum.usuarios.service.impl;
 
+import com.forum.usuarios.dto.AtualizarEmailDto;
 import com.forum.usuarios.dto.UsuarioDTO;
 import com.forum.usuarios.entity.UsuarioEntity;
 import com.forum.usuarios.model.UsuarioResponseModel;
@@ -11,6 +12,8 @@ import org.modelmapper.convention.MatchingStrategies;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -60,34 +63,59 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public void deletarUsuario(String id) {
+    public ResponseEntity<String> deletarUsuario(String id) {
 
         log.info("Entrando no metodo deletar.");
 
         UsuarioDTO usuarioDTO = getUserDetailsById(id);
 
-        usuarioRepository.deleteById(usuarioDTO.getId());
+        if(usuarioDTO == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario nao encontrado.");
+        }
 
+        usuarioRepository.deleteById(usuarioDTO.getId());
         log.info("Usuario deletado.");
+
+        return ResponseEntity.ok("Usuario deletado com sucesso");
     }
 
     @Override
-    public List<UsuarioResponseModel> listar(){
+    public ResponseEntity<?> listar(){
         
         log.info("Entrando no metodo listar usuarios.");
         
-        List<UsuarioResponseModel> returnValue = new ArrayList<>();
+        List<UsuarioResponseModel> returnValue;
         List<UsuarioEntity> entityList = usuarioRepository.findAll();
         
         if(entityList.isEmpty() || entityList == null){
-            return returnValue;
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nao ha usuarios cadastrados");
         }
         
         Type listType = new TypeToken<List<UsuarioResponseModel>>(){}.getType();
    
         returnValue = new ModelMapper().map(entityList, listType);
         
-        return returnValue;
+        return ResponseEntity.ok(returnValue);
+    }
+
+    @Override
+    public ResponseEntity<?> atualizarEmail(AtualizarEmailDto atualizarEmailDto) {
+        UsuarioEntity usuarioEntity = usuarioRepository.findByEmail(atualizarEmailDto.getAntigoEmail());
+
+        if(usuarioEntity == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Email inexistente.");
+        }
+
+        if(atualizarEmailDto.getNovoEmail().matches(usuarioEntity.getEmail())){
+            log.info("Ocorreu um erro: E-mail não pode ser o mesmo.");
+            return ResponseEntity.badRequest().body("E-mail deve ser diferente do anterior.");
+        }
+
+        usuarioEntity.setEmail(atualizarEmailDto.getNovoEmail());
+        usuarioRepository.save(usuarioEntity);
+
+        UsuarioResponseModel usuarioResponseModel = new ModelMapper().map(usuarioEntity, UsuarioResponseModel.class);
+        return ResponseEntity.ok(usuarioResponseModel);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.forum.usuarios.controller;
 
+import com.forum.usuarios.dto.AtualizarEmailDto;
 import com.forum.usuarios.dto.UsuarioDTO;
 import com.forum.usuarios.model.UsuarioModel;
 import com.forum.usuarios.model.UsuarioResponseModel;
@@ -47,21 +48,17 @@ public class UsuarioController {
 
     @DeleteMapping("/deletar/{id}")
     public ResponseEntity<String> deletar(@PathVariable(value = "id") String id){
-        usuarioService.deletarUsuario(id);
-
-        return ResponseEntity.status(HttpStatus.OK).body("Usuario deletado com sucesso");
+        return usuarioService.deletarUsuario(id);
     }
 
     @GetMapping("/listar")
     public ResponseEntity<?> listar() {
-        List<UsuarioResponseModel> responseModelList = usuarioService.listar();
+        return usuarioService.listar();
+    }
 
-        if (responseModelList.isEmpty() || responseModelList == null){
-
-            return ResponseEntity.status(HttpStatus.OK).body("Nao ha usuarios cadastrados.");
-        }
-
-        return ResponseEntity.status(HttpStatus.OK).body(responseModelList);
+    @PutMapping("/atualizar")
+    public ResponseEntity<?> atualizarEmail(@RequestBody @Valid AtualizarEmailDto atualizarEmailDto){
+        return usuarioService.atualizarEmail(atualizarEmailDto);
     }
 
 }
