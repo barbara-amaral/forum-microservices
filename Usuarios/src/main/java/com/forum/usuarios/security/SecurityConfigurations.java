@@ -51,11 +51,12 @@ public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests()
                 .antMatchers("/**").hasIpAddress(environment.getProperty("gateway.ip"))
                 .antMatchers("/login").permitAll()
                 .anyRequest().authenticated()
+                .and().csrf().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilterBefore(new AutenticacaoFilter(usuarioRepository, tokenService), UsernamePasswordAuthenticationFilter.class);
     }

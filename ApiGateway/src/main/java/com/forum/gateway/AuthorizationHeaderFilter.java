@@ -2,6 +2,8 @@ package com.forum.gateway;
 
 import io.jsonwebtoken.Jwts;
 import org.apache.http.HttpHeaders;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
@@ -27,6 +29,8 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
         // conf properties
     }
 
+    private static final Logger log = LoggerFactory.getLogger(AuthorizationHeaderFilter.class);
+
     @Override
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
@@ -34,21 +38,23 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
             ServerHttpRequest request = exchange.getRequest();
 
             if (!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
-                return onError(exchange, "No authorization header", HttpStatus.UNAUTHORIZED);
+                log.info("Token inexistente");
+                return onError(exchange, HttpStatus.UNAUTHORIZED);
             }
 
             String authorizationHeader = request.getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
             String jwt = authorizationHeader.replace("Bearer", "");
 
             if (!isJwtValid(jwt)) {
-                return onError(exchange, "JWT token is not valid", HttpStatus.UNAUTHORIZED);
+                log.info("Token invalido");
+                return onError(exchange, HttpStatus.UNAUTHORIZED);
             }
 
             return chain.filter(exchange);
         };
     }
 
-    private Mono<Void> onError(ServerWebExchange exchange, String err, HttpStatus httpStatus) {
+    private Mono<Void> onError(ServerWebExchange exchange, HttpStatus httpStatus) {
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(httpStatus);
 

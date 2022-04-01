@@ -3,6 +3,8 @@ package com.forum.usuarios.controller;
 import com.forum.usuarios.model.LoginModel;
 import com.forum.usuarios.security.AutenticacaoFilter;
 import com.forum.usuarios.service.TokenService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,6 +29,8 @@ public class AutenticacaoController {
     @Autowired
     TokenService tokenService;
 
+    private static final Logger log = LoggerFactory.getLogger(AutenticacaoController.class);
+
     @PostMapping
     public ResponseEntity<?> autenticar(@RequestBody @Valid LoginModel loginModel, HttpServletResponse httpServletResponse) {
 
@@ -35,13 +39,15 @@ public class AutenticacaoController {
         try{
 
             Authentication authentication = authenticationManager.authenticate(dadosLogin);
+            log.info("Usuario autenticado");
 
             tokenService.gerarToken(authentication, httpServletResponse);
+            log.info("Token gerado.");
 
             return ResponseEntity.ok("Usuario autenticado com sucesso.");
 
         }catch (AuthenticationException e){
-
+            log.info("Ocorreu um erro durante a autenticacao.");
             return ResponseEntity.badRequest().body("Dados inválidos.");
         }
     }

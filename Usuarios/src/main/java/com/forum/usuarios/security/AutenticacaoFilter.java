@@ -3,6 +3,9 @@ package com.forum.usuarios.security;
 import com.forum.usuarios.entity.UsuarioEntity;
 import com.forum.usuarios.repository.UsuarioRepository;
 import com.forum.usuarios.service.TokenService;
+import com.forum.usuarios.service.impl.UsuarioServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,6 +24,8 @@ public class AutenticacaoFilter extends OncePerRequestFilter {
     private UsuarioRepository usuarioRepository;
     private TokenService tokenService;
 
+    private static final Logger log = LoggerFactory.getLogger(AutenticacaoFilter.class);
+
     @Autowired
     public AutenticacaoFilter(UsuarioRepository usuarioRepository, TokenService tokenService){
         this.usuarioRepository = usuarioRepository;
@@ -34,7 +39,7 @@ public class AutenticacaoFilter extends OncePerRequestFilter {
 
         boolean valido = tokenService.isTokenValido(token);
 
-        if(valido){
+        if(valido == true){
             autenticarCliente(token);
         }
 
@@ -49,10 +54,13 @@ public class AutenticacaoFilter extends OncePerRequestFilter {
         Optional<UsuarioEntity> usuarioEntity = usuarioRepository.findById(idUsuario);
 
         if (usuarioEntity.isEmpty()){
-                throw new UsernameNotFoundException("Usuario nao encontrado");
-        }else if(usuarioEntity.isPresent()){
+            log.info("Usuario nao encontrado. Uma excecao sera gerada.");
+            throw new UsernameNotFoundException("Usuario nao encontrado");
+        }else{
+
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(usuarioEntity.get().getEmail(), usuarioEntity.get().getSenha(), usuarioEntity.get().getPerfis());
             SecurityContextHolder.getContext().setAuthentication(authentication);
+            log.info("Usuario " + usuarioEntity.get().getNome() + " autenticado");
         }
     }
 

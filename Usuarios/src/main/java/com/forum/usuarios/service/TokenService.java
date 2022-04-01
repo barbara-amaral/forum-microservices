@@ -1,9 +1,12 @@
 package com.forum.usuarios.service;
 
 import com.forum.usuarios.entity.UsuarioEntity;
+import com.forum.usuarios.service.impl.UsuarioServiceImpl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.security.core.Authentication;
@@ -22,7 +25,11 @@ public class TokenService {
         this.environment = environment;
     }
 
+    private static final Logger log = LoggerFactory.getLogger(TokenService.class);
+
     public String gerarToken(Authentication authentication, HttpServletResponse httpServletResponse) {
+
+        log.info("Entrando no metodo gerarToken");
 
         UsuarioEntity logado = ( (UsuarioEntity) authentication.getPrincipal());
         Date hoje = new Date();
@@ -46,6 +53,7 @@ public class TokenService {
 
         try {
             Jwts.parser().setSigningKey(environment.getProperty("token.secret")).parseClaimsJws(token);
+            log.info("Token valido");
             return true;
         }catch (Exception e){
             return false;
