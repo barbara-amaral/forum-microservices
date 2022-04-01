@@ -1,9 +1,11 @@
 package com.forum.usuarios.dto;
 
+import com.forum.usuarios.entity.UsuarioEntity;
 import com.forum.usuarios.model.Perfil;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class UsuarioDTO implements Serializable {
 
@@ -52,4 +54,5 @@ public class UsuarioDTO implements Serializable {
     public void setPerfis(List<Perfil> perfis) {
         this.perfis = perfis;
     }
+
 }

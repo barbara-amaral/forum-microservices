@@ -1,15 +1,12 @@
 package com.forum.usuarios.security;
 
-import com.forum.usuarios.dto.UsuarioDTO;
 import com.forum.usuarios.entity.UsuarioEntity;
 import com.forum.usuarios.repository.UsuarioRepository;
-import com.forum.usuarios.service.AutenticacaoService;
 import com.forum.usuarios.service.TokenService;
-import com.forum.usuarios.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -48,11 +45,15 @@ public class AutenticacaoFilter extends OncePerRequestFilter {
     private void autenticarCliente(String token) {
 
         String idUsuario = tokenService.getIdUsuario(token);
-        UsuarioEntity usuarioEntity = usuarioRepository.findById(idUsuario).get();
 
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(usuarioEntity.getEmail(), usuarioEntity.getSenha(), usuarioEntity.getPerfis());
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        Optional<UsuarioEntity> usuarioEntity = usuarioRepository.findById(idUsuario);
 
+        if (usuarioEntity.isEmpty()){
+                throw new UsernameNotFoundException("Usuario nao encontrado");
+        }else if(usuarioEntity.isPresent()){
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(usuarioEntity.get().getEmail(), usuarioEntity.get().getSenha(), usuarioEntity.get().getPerfis());
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
     }
 
     private String recuperarToken(HttpServletRequest httpServletRequest){

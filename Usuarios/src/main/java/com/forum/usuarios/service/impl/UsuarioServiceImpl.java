@@ -2,21 +2,22 @@ package com.forum.usuarios.service.impl;
 
 import com.forum.usuarios.dto.UsuarioDTO;
 import com.forum.usuarios.entity.UsuarioEntity;
+import com.forum.usuarios.model.UsuarioResponseModel;
 import com.forum.usuarios.repository.UsuarioRepository;
 import com.forum.usuarios.service.UsuarioService;
+import com.google.common.reflect.TypeToken;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -68,6 +69,25 @@ public class UsuarioServiceImpl implements UsuarioService {
         usuarioRepository.deleteById(usuarioDTO.getId());
 
         log.info("Usuario deletado.");
+    }
+
+    @Override
+    public List<UsuarioResponseModel> listar(){
+        
+        log.info("Entrando no metodo listar usuarios.");
+        
+        List<UsuarioResponseModel> returnValue = new ArrayList<>();
+        List<UsuarioEntity> entityList = usuarioRepository.findAll();
+        
+        if(entityList.isEmpty() || entityList == null){
+            return returnValue;
+        }
+        
+        Type listType = new TypeToken<List<UsuarioResponseModel>>(){}.getType();
+   
+        returnValue = new ModelMapper().map(entityList, listType);
+        
+        return returnValue;
     }
 
     @Override
