@@ -15,4 +15,5 @@ public interface UsuarioService {
     ResponseEntity atualizarEmail(AtualizarEmailDto atualizarEmailDto);
     UsuarioDTO getUserDetailsByEmail(String email);
     UsuarioDTO getUserDetailsById(String id);
+    UsuarioDTO getAutor(String id);
 }

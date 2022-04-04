@@ -139,4 +139,9 @@ public class UsuarioServiceImpl implements UsuarioService {
         return new ModelMapper().map(usuarioEntity, UsuarioDTO.class);
     }
 
+    @Override
+    public UsuarioDTO getAutor(String id) {
+        return getUserDetailsById(id);
+    }
+
 }

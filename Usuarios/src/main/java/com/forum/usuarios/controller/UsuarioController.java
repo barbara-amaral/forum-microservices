@@ -61,4 +61,15 @@ public class UsuarioController {
         return usuarioService.atualizarEmail(atualizarEmailDto);
     }
 
+    @GetMapping("/autor/{id}")
+    public ResponseEntity<UsuarioResponseModel> getAutor(@PathVariable String id){
+
+        UsuarioDTO autor = usuarioService.getAutor(id);
+
+        ModelMapper modelMapper = new ModelMapper();
+        UsuarioResponseModel responseModel = modelMapper.map(autor, UsuarioResponseModel.class);
+
+        return ResponseEntity.ok(responseModel);
+    }
+
 }
