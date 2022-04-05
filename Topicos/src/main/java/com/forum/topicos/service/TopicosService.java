@@ -10,5 +10,5 @@ import javax.servlet.http.HttpServletRequest;
 public interface TopicosService {
     TopicoDTO cadastrarTopico(TopicoDTO topicoDTO, HttpServletRequest httpServletRequest);
     String getUserid(HttpServletRequest httpServletRequest);
-    AutorModel getUserDetailsById(String id);
+    AutorModel getAutor(String id);
 }

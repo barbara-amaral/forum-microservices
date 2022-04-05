@@ -52,7 +52,7 @@ public class UsuarioController {
     }
 
     @GetMapping("/listar")
-    public ResponseEntity<?> listar() {
+    public ResponseEntity<List<UsuarioResponseModel>> listar() {
         return usuarioService.listar();
     }
 
@@ -61,7 +61,7 @@ public class UsuarioController {
         return usuarioService.atualizarEmail(atualizarEmailDto);
     }
 
-    @GetMapping("/autor/{id}")
+    @GetMapping("/getautor/{id}")
     public ResponseEntity<UsuarioResponseModel> getAutor(@PathVariable String id){
 
         UsuarioDTO autor = usuarioService.getAutor(id);

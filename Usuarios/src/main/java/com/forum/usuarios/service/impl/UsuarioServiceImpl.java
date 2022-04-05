@@ -80,22 +80,22 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public ResponseEntity<?> listar(){
+    public ResponseEntity<List<UsuarioResponseModel>> listar(){
         
         log.info("Entrando no metodo listar usuarios.");
         
-        List<UsuarioResponseModel> returnValue;
+        List<UsuarioResponseModel> returnValue = new ArrayList<>();
         List<UsuarioEntity> entityList = usuarioRepository.findAll();
         
         if(entityList.isEmpty() || entityList == null){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nao ha usuarios cadastrados");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(returnValue);
         }
         
         Type listType = new TypeToken<List<UsuarioResponseModel>>(){}.getType();
    
         returnValue = new ModelMapper().map(entityList, listType);
         
-        return ResponseEntity.ok(returnValue);
+        return ResponseEntity.status(HttpStatus.OK).body(returnValue);
     }
 
     @Override
@@ -116,14 +116,6 @@ public class UsuarioServiceImpl implements UsuarioService {
 
         UsuarioResponseModel usuarioResponseModel = new ModelMapper().map(usuarioEntity, UsuarioResponseModel.class);
         return ResponseEntity.ok(usuarioResponseModel);
-    }
-
-    @Override
-    public UsuarioDTO getUserDetailsByEmail(String email) {
-        UsuarioEntity usuarioEntity = usuarioRepository.findByEmail(email);
-
-        if(usuarioEntity == null) throw new UsernameNotFoundException(email);
-        return new ModelMapper().map(usuarioEntity, UsuarioDTO.class);
     }
 
     @Override

@@ -7,6 +7,8 @@ import com.forum.topicos.model.StatusTopico;
 import com.forum.topicos.repository.TopicoRepository;
 import com.forum.topicos.response.TopicoResponseModel;
 import com.forum.topicos.service.TopicosService;
+import com.forum.topicos.service.AutorServiceClient;
+import feign.FeignException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.modelmapper.ModelMapper;
@@ -18,7 +20,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
@@ -31,12 +32,12 @@ public class TopicosServiceImpl implements TopicosService {
     TopicoRepository topicoRepository;
 
     @Autowired
-    RestTemplate restTemplate;
+    AutorServiceClient autorServiceClient;
 
     @Autowired
     Environment environment;
 
-    private static final Logger log = LoggerFactory.getLogger(TopicoResponseModel.class);
+    private static final Logger log = LoggerFactory.getLogger(TopicosServiceImpl.class);
 
     @Override
     public TopicoDTO cadastrarTopico(TopicoDTO topicoDTO, HttpServletRequest httpServletRequest) {
@@ -52,7 +53,7 @@ public class TopicosServiceImpl implements TopicosService {
 
         log.info("Id do usuario identificado: " + id);
 
-        AutorModel autorModel = getUserDetailsById(id);
+        AutorModel autorModel = getAutor(id);
         topicoDTO.setAutor(autorModel);
 
         log.info("Autor do topico identificado: " + autorModel.getNome());
@@ -84,13 +85,9 @@ public class TopicosServiceImpl implements TopicosService {
     }
 
     @Override
-    public AutorModel getUserDetailsById(String id) {
+    public AutorModel getAutor(String id) {
 
-        String autorUrl = String.format("http://USUARIOS-MS/usuarios/autor/%s",id);
-        ResponseEntity<AutorModel> autor = restTemplate.exchange(autorUrl, HttpMethod.GET, null, new ParameterizedTypeReference<AutorModel>() {
-        });
-        AutorModel autorModel = autor.getBody();
-
-        return autorModel;
+        AutorModel autor = autorServiceClient.getAutor(id);
+        return autor;
     }
 }

@@ -11,9 +11,8 @@ public interface UsuarioService {
 
     UsuarioDTO cadastrarUsuario(UsuarioDTO usuarioDTO);
     ResponseEntity<String> deletarUsuario(String id);
-    ResponseEntity<?> listar();
+    ResponseEntity<List<UsuarioResponseModel>> listar();
     ResponseEntity atualizarEmail(AtualizarEmailDto atualizarEmailDto);
-    UsuarioDTO getUserDetailsByEmail(String email);
     UsuarioDTO getUserDetailsById(String id);
     UsuarioDTO getAutor(String id);
 }
