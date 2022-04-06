@@ -6,25 +6,20 @@ import com.forum.topicos.entity.TopicoEntity;
 import com.forum.topicos.model.AutorModel;
 import com.forum.topicos.model.StatusTopico;
 import com.forum.topicos.repository.TopicoRepository;
-import com.forum.topicos.response.TopicoResponseModel;
 import com.forum.topicos.response.TopicosListResponseModel;
-import com.forum.topicos.service.TopicosService;
 import com.forum.topicos.service.AutorServiceClient;
+import com.forum.topicos.service.TopicosService;
 import com.google.common.reflect.TypeToken;
-import feign.FeignException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Type;
@@ -85,6 +80,8 @@ public class TopicosServiceImpl implements TopicosService {
     @Override
     public String getUserid(HttpServletRequest httpServletRequest) {
 
+        log.info("Entrando no metodo getUserid.");
+
         String authorization = httpServletRequest.getHeader("Authorization");
         String token = authorization.substring(7);
         Claims claims = Jwts.parser().setSigningKey(environment.getProperty("token.secret")).parseClaimsJws(token).getBody();
@@ -96,7 +93,11 @@ public class TopicosServiceImpl implements TopicosService {
     @Override
     public AutorModel getAutor(String id) {
 
+        log.info("Entrando no metodo getAutor.");
+
         AutorModel autor = autorServiceClient.getAutor(id);
+
+        log.info("Comunicacao com microservico Usuarios-MS bem sucedida.");
         return autor;
     }
 
@@ -121,14 +122,22 @@ public class TopicosServiceImpl implements TopicosService {
 
     @Override
     public ResponseEntity<?> getTopicoById(String id) {
+
+        log.info("Entrando no metodo getTopicoById.");
+
         Optional<TopicoEntity> topicoEntity = topicoRepository.findById(id);
 
         if (topicoEntity.isEmpty()){
+            log.info("Topico nao encontrado na base de dados.");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Topico nao encontrado.");
         }
 
+        log.info("Topico encontrado na base de dados.");
+
         ModelMapper modelMapper = new ModelMapper();
         TopicoDTO topicoDTO = modelMapper.map(topicoEntity, TopicoDTO.class);
+
+        log.info("Retornando topico.");
 
         return ResponseEntity.ok().body(topicoDTO);
     }
@@ -136,13 +145,21 @@ public class TopicosServiceImpl implements TopicosService {
     @Override
     public ResponseEntity<?> atualizarTopico(TopicoDTO topicoDTO, AtualizarTopicoDto atualizarTopicoDto) {
 
+        log.info("Entrando no metodo atualizarTopico.");
+
         ModelMapper modelMapper = new ModelMapper();
         TopicoEntity topicoEntity = modelMapper.map(topicoDTO, TopicoEntity.class);
 
         topicoEntity.setMensagem(atualizarTopicoDto.getMensagem());
+        log.info("Topico atualizado.");
+
         topicoRepository.save(topicoEntity);
 
+        log.info("Topico salvo no banco de dados.");
+
         topicoDTO = modelMapper.map(topicoEntity, TopicoDTO.class);
+
+        log.info("Retornando topico.");
 
         return ResponseEntity.ok().body(topicoDTO);
     }
@@ -150,15 +167,22 @@ public class TopicosServiceImpl implements TopicosService {
     @Override
     public ResponseEntity<List<TopicosListResponseModel>> listar() {
 
+        log.info("Entrando no metodo listar.");
+
         List<TopicosListResponseModel> topicosResponseModel = new ArrayList<>();
         List<TopicoEntity> topicoEntityList = topicoRepository.findAll();
 
         if(topicoEntityList.isEmpty()){
+            log.info("Nao foram encontrados topicos no banco de dados.");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(topicosResponseModel);
         }
 
+        log.info("Topicos encontrados no banco de dados.");
+
         Type listType = new TypeToken<List<TopicosListResponseModel>>(){}.getType();
         topicosResponseModel = new ModelMapper().map(topicoEntityList, listType);
+
+        log.info("Retornando topicos.");
 
         return ResponseEntity.ok().body(topicosResponseModel);
     }
