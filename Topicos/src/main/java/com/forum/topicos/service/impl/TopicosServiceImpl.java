@@ -1,13 +1,16 @@
 package com.forum.topicos.service.impl;
 
+import com.forum.topicos.dto.AtualizarTopicoDto;
 import com.forum.topicos.dto.TopicoDTO;
 import com.forum.topicos.entity.TopicoEntity;
 import com.forum.topicos.model.AutorModel;
 import com.forum.topicos.model.StatusTopico;
 import com.forum.topicos.repository.TopicoRepository;
 import com.forum.topicos.response.TopicoResponseModel;
+import com.forum.topicos.response.TopicosListResponseModel;
 import com.forum.topicos.service.TopicosService;
 import com.forum.topicos.service.AutorServiceClient;
+import com.google.common.reflect.TypeToken;
 import feign.FeignException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -18,12 +21,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TopicosServiceImpl implements TopicosService {
@@ -89,5 +98,68 @@ public class TopicosServiceImpl implements TopicosService {
 
         AutorModel autor = autorServiceClient.getAutor(id);
         return autor;
+    }
+
+    @Override
+    public ResponseEntity<String> deletarTopico(String id) {
+
+        log.info("Entrando no metodo deletarTopico.");
+
+        Optional<TopicoEntity> topicoEntity = topicoRepository.findById(id);
+
+        if(topicoEntity.isEmpty()){
+            log.info("Topico nao encontrado na base de dados.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Topico nao encontrado.");
+        }
+
+        log.info("Topico encontrado.");
+        topicoRepository.delete(topicoEntity.get());
+
+        log.info("Topico deletado.");
+        return ResponseEntity.ok("Topico deletado com sucesso.");
+    }
+
+    @Override
+    public ResponseEntity<?> getTopicoById(String id) {
+        Optional<TopicoEntity> topicoEntity = topicoRepository.findById(id);
+
+        if (topicoEntity.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Topico nao encontrado.");
+        }
+
+        ModelMapper modelMapper = new ModelMapper();
+        TopicoDTO topicoDTO = modelMapper.map(topicoEntity, TopicoDTO.class);
+
+        return ResponseEntity.ok().body(topicoDTO);
+    }
+
+    @Override
+    public ResponseEntity<?> atualizarTopico(TopicoDTO topicoDTO, AtualizarTopicoDto atualizarTopicoDto) {
+
+        ModelMapper modelMapper = new ModelMapper();
+        TopicoEntity topicoEntity = modelMapper.map(topicoDTO, TopicoEntity.class);
+
+        topicoEntity.setMensagem(atualizarTopicoDto.getMensagem());
+        topicoRepository.save(topicoEntity);
+
+        topicoDTO = modelMapper.map(topicoEntity, TopicoDTO.class);
+
+        return ResponseEntity.ok().body(topicoDTO);
+    }
+
+    @Override
+    public ResponseEntity<List<TopicosListResponseModel>> listar() {
+
+        List<TopicosListResponseModel> topicosResponseModel = new ArrayList<>();
+        List<TopicoEntity> topicoEntityList = topicoRepository.findAll();
+
+        if(topicoEntityList.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(topicosResponseModel);
+        }
+
+        Type listType = new TypeToken<List<TopicosListResponseModel>>(){}.getType();
+        topicosResponseModel = new ModelMapper().map(topicoEntityList, listType);
+
+        return ResponseEntity.ok().body(topicosResponseModel);
     }
 }

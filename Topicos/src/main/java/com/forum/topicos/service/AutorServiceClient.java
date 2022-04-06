@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient(name = "usuarios-ms")
 public interface AutorServiceClient {
 
-    @GetMapping("/usuarios/getautorr/{id}")
+    @GetMapping("/usuarios/getautor/{id}")
     AutorModel getAutor(@PathVariable String id);
 
 }
