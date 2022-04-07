@@ -132,6 +132,19 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
+    public UsuarioEntity getUserEntityByEmail(String email) {
+        UsuarioEntity usuarioEntity = usuarioRepository.findByEmail(email);
+
+        if(usuarioEntity == null){
+            log.info("Usuario nao encontrado na base de dados.");
+            throw new UsernameNotFoundException("Usuario nao encontrado");
+        }
+
+        log.info("Usuario " + usuarioEntity.getNome() + " encontrado na base de dados");
+        return usuarioEntity;
+    }
+
+    @Override
     public UsuarioDTO getAutor(String id) {
         return getUserDetailsById(id);
     }

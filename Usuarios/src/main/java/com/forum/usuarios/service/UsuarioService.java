@@ -2,6 +2,7 @@ package com.forum.usuarios.service;
 
 import com.forum.usuarios.dto.AtualizarEmailDto;
 import com.forum.usuarios.dto.UsuarioDTO;
+import com.forum.usuarios.entity.UsuarioEntity;
 import com.forum.usuarios.model.UsuarioResponseModel;
 import org.springframework.http.ResponseEntity;
 
@@ -14,5 +15,6 @@ public interface UsuarioService {
     ResponseEntity<List<UsuarioResponseModel>> listar();
     ResponseEntity atualizarEmail(AtualizarEmailDto atualizarEmailDto);
     UsuarioDTO getUserDetailsById(String id);
+    UsuarioEntity getUserEntityByEmail(String email);
     UsuarioDTO getAutor(String id);
 }

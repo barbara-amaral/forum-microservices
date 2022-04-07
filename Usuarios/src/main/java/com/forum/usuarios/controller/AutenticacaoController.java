@@ -1,7 +1,6 @@
 package com.forum.usuarios.controller;
 
 import com.forum.usuarios.model.LoginModel;
-import com.forum.usuarios.security.AutenticacaoFilter;
 import com.forum.usuarios.service.TokenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
