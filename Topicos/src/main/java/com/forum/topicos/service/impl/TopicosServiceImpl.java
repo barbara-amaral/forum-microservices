@@ -97,7 +97,7 @@ public class TopicosServiceImpl implements TopicosService {
 
         AutorModel autor = autorServiceClient.getAutor(id);
 
-        log.info("Comunicacao com microservico Usuarios-MS bem sucedida.");
+        log.info("Retornando autor: " + autor.getNome());
         return autor;
     }
 

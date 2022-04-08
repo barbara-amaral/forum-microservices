@@ -54,6 +54,7 @@ public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
                 .antMatchers("/**").hasIpAddress(environment.getProperty("gateway.ip"))
                 .antMatchers("/login").permitAll()
                 .antMatchers("/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/usuarios-ms/actuator/*").hasIpAddress(environment.getProperty("gateway.ip"))
                 .anyRequest().authenticated()
                 .and().csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
